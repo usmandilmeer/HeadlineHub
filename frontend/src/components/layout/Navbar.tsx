@@ -67,12 +67,9 @@ export default function Navbar({
         className="fixed top-[2px] left-0 w-full z-50 border-b border-outline-variant"
         style={{ background: "rgba(250,248,255,0.85)", backdropFilter: "blur(20px)" }}
       >
-        <div
-          className="mx-auto flex items-center gap-6"
-          style={{ maxWidth: 1540, padding: "10px 24px", gap: 73 }}
-        >
+        <div className="site-navbar-inner mx-auto flex items-center">
           {/* Brand */}
-          <Link href="/" className="flex-shrink-0">
+          <Link href="/" className="site-navbar-brand flex-shrink-0">
             <span
               className="font-newsreader font-bold tracking-tight"
               style={{ fontSize: 26, color: "#1f108e" }}
@@ -83,7 +80,7 @@ export default function Navbar({
 
           {/* Category Links — Desktop */}
           {isHomePage && (
-            <div className="hidden lg:flex items-center gap-3">
+            <div className="hidden lg:flex items-center gap-1 xl:gap-3">
               {CATEGORIES.map((cat) => (
                 <button
                   key={cat.value}
@@ -92,7 +89,7 @@ export default function Navbar({
                   style={{
                     fontSize: 14,
                     fontWeight: activeCategory === cat.value ? 600 : 500,
-                    padding: "7px 16px",
+                    padding: "7px clamp(10px, 1vw, 16px)",
                     borderRadius: 9999,
                     background: activeCategory === cat.value ? "#3730a3" : "transparent",
                     color: activeCategory === cat.value ? "#ffffff" : "#131b2e",
@@ -109,10 +106,8 @@ export default function Navbar({
           {/* Search Bar */}
           {isHomePage && (
             <div
-              className="hidden lg:block"
+              className="site-navbar-search hidden lg:block"
               style={{
-                width: "min(38vw, 485px)",
-                minWidth: 330,
                 marginLeft: "auto",
               }}
             >
@@ -148,7 +143,11 @@ export default function Navbar({
           )}
 
           {/* Actions */}
-          <div className="flex items-center gap-1" style={{ marginLeft: isHomePage ? 14 : "auto" }}>
+          <div
+            className={`site-navbar-actions ${
+              isHomePage ? "site-navbar-actions-home" : "site-navbar-actions-away"
+            } flex items-center gap-1`}
+          >
             {loading ? (
               <div
                 className="animate-pulse rounded-full"
@@ -270,8 +269,8 @@ export default function Navbar({
         {/* Mobile Dropdown */}
         {isHomePage && mobileMenuOpen && (
           <div
-            className="lg:hidden border-t border-outline-variant"
-            style={{ background: "#faf8ff", padding: "12px 24px 16px" }}
+            className="site-navbar-mobile lg:hidden border-t border-outline-variant"
+            style={{ background: "#faf8ff" }}
           >
             {/* Mobile Search */}
             <div className="relative mb-3">
@@ -307,7 +306,7 @@ export default function Navbar({
                     padding: "6px 14px",
                     borderRadius: 9999,
                     background: activeCategory === cat.value ? "#3730a3" : "#eaedff",
-                    color: activeCategory === cat.value ? "#a9a7ff" : "#464553",
+                    color: activeCategory === cat.value ? "#ffffff" : "#464553",
                     border: "none",
                     cursor: "pointer",
                   }}
@@ -319,6 +318,9 @@ export default function Navbar({
           </div>
         )}
       </nav>
+      {isHomePage && mobileMenuOpen && (
+        <div className="site-navbar-menu-spacer lg:hidden" aria-hidden="true" />
+      )}
     </>
   );
 }

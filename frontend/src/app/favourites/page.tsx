@@ -2,14 +2,12 @@
 
 /* eslint-disable @next/next/no-img-element */
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Footer from "@/components/layout/Footer";
 import api from "@/lib/api";
 import {
-  getArticleImage,
   getArticleKey,
-  readingTime,
   relativeTime,
 } from "@/lib/articles";
 import { useAuth } from "@/context/AuthContext";
@@ -45,6 +43,55 @@ function BookmarkIcon({
         strokeLinejoin="round"
       />
     </svg>
+  );
+}
+
+function ClockIcon({ size = 15 }: { size?: number }) {
+  return (
+    <svg aria-hidden="true" width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="8.5" stroke="currentColor" strokeWidth="1.8" />
+      <path d="M12 7.5v5l3.2 2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function getPublishedText(date: string | null | undefined) {
+  if (!date) return null;
+  const parsed = new Date(date);
+  if (Number.isNaN(parsed.getTime())) return null;
+  return `Published ${relativeTime(parsed)}`;
+}
+
+function SavedArticleMeta({ article }: { article: Article }) {
+  const publishedText = getPublishedText(article.published_at);
+  if (!publishedText) return null;
+
+  return (
+    <div className="saved-meta">
+      <ClockIcon />
+      <span>{publishedText}</span>
+    </div>
+  );
+}
+
+function SavedArticleImage({
+  article,
+  className = "article-image",
+}: {
+  article: Article;
+  className?: string;
+}) {
+  if (!article.image_url) return null;
+
+  return (
+    <img
+      className={className}
+      src={article.image_url}
+      alt=""
+      onError={(event) => {
+        event.currentTarget.style.display = "none";
+      }}
+    />
   );
 }
 
@@ -236,13 +283,8 @@ export default function FavouritesPage() {
               <div className="saved-layout grid gap-6">
                 {/* FEATURED */}
                 <article className="news-card featured-card">
-                  <div style={{ position: "relative", aspectRatio: "1.92 / 1" }}>
-                    <img
-                      className="article-image"
-                      src={getArticleImage(featured, 1)}
-                      alt=""
-                    />
-
+                  <div className={featured.image_url ? "featured-media" : "featured-media no-image"}>
+                    <SavedArticleImage article={featured} />
                     <button
                       onClick={() => removeArticle(featured)}
                       style={{
@@ -267,6 +309,7 @@ export default function FavouritesPage() {
                     <span className="chip">
                       {featured.source || featured.category}
                     </span>
+                    <SavedArticleMeta article={featured} />
 
                     <h2 className="featured-title">
                       {featured.title}
@@ -287,11 +330,7 @@ export default function FavouritesPage() {
                       style={{ padding: 24 }}
                     >
                       <div style={{ marginBottom: 12 }}>
-                        <img
-                          src={getArticleImage(article, 2)}
-                          alt=""
-                          className="side-img"
-                        />
+                        <SavedArticleImage article={article} className="side-img" />
                       </div>
 
                       <div
@@ -318,6 +357,7 @@ export default function FavouritesPage() {
                           <TrashIcon size={20} />
                         </button>
                       </div>
+                      <SavedArticleMeta article={article} />
 
                       <h3 style={{ marginTop: 14 }}>{article.title}</h3>
 
@@ -331,9 +371,9 @@ export default function FavouritesPage() {
 
               {/* GRID */}
               <div className="grid gap-6 md:grid-cols-3" style={{ marginTop: 28 }}>
-                {gridArticles.map((article, i) => (
+                {gridArticles.map((article) => (
                   <article key={getArticleKey(article)} className="news-card">
-                    <img src={getArticleImage(article, i)} alt="" />
+                    <SavedArticleImage article={article} className="saved-grid-img" />
                     <div style={{ padding: 24 }}>
                       <div className="flex justify-between">
                         <span className="chip">
@@ -343,6 +383,7 @@ export default function FavouritesPage() {
                           <TrashIcon />
                         </button>
                       </div>
+                      <SavedArticleMeta article={article} />
 
                       <h3 style={{ marginTop: 14 }}>{article.title}</h3>
                       <p style={{ marginTop: 8, color: "#464553" }}>
@@ -371,11 +412,39 @@ export default function FavouritesPage() {
           grid-template-columns: minmax(0, 2fr) minmax(315px, 0.98fr);
         }
 
-        .side-img {
+        .featured-media {
+          position: relative;
+          aspect-ratio: 1.92 / 1;
+        }
+
+        .featured-media.no-image {
+          aspect-ratio: auto;
+          min-height: 78px;
+        }
+
+        :global(.side-img) {
           width: 100%;
           height: 140px;
           object-fit: cover;
           border-radius: 10px;
+        }
+
+        :global(.saved-grid-img) {
+          width: 100%;
+          aspect-ratio: 1.72 / 1;
+          display: block;
+          object-fit: cover;
+          background: #e2e7ff;
+        }
+
+        :global(.saved-meta) {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          margin-top: 8px;
+          color: #464553;
+          font-size: 13px;
+          line-height: 1.2;
         }
 
         .featured-content {

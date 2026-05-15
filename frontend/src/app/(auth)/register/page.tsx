@@ -42,6 +42,7 @@ export default function RegisterPage() {
 
   return (
     <main
+      className="auth-main"
       style={{
         minHeight: "100vh",
         borderTop: "3px solid #1f108e",
@@ -52,6 +53,7 @@ export default function RegisterPage() {
       }}
     >
       <section
+        className="auth-card auth-card-register"
         style={{
           width: "min(100%, 560px)",
           borderRadius: 12,
@@ -61,18 +63,18 @@ export default function RegisterPage() {
         }}
       >
         <div style={{ textAlign: "center" }}>
-          <h1 className="font-newsreader" style={{ fontSize: 40, lineHeight: "50px", fontWeight: 700 }}>
+          <h1 className="font-newsreader auth-title" style={{ fontSize: 40, lineHeight: "50px", fontWeight: 700 }}>
             Get the Full Story with
             <br />
             HeadlineHub
           </h1>
-          <p className="font-newsreader" style={{ marginTop: 22, color: "#464553", fontSize: 20, lineHeight: "32px" }}>
+          <p className="font-newsreader auth-subtitle" style={{ marginTop: 22, color: "#464553", fontSize: 20, lineHeight: "32px" }}>
             Join our community of readers for curated insights and breaking news delivered daily.
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} style={{ marginTop: 66 }}>
-          <label className="font-newsreader" style={{ display: "block", fontSize: 18, marginBottom: 9 }}>
+        <form className="auth-form auth-form-register" onSubmit={handleSubmit} style={{ marginTop: 66 }}>
+          <label className="font-newsreader auth-label" style={{ display: "block", fontSize: 18, marginBottom: 9 }}>
             Full Name
           </label>
           <input
@@ -84,7 +86,7 @@ export default function RegisterPage() {
             required
           />
 
-          <label className="font-newsreader" style={{ display: "block", fontSize: 18, marginTop: 30, marginBottom: 9 }}>
+          <label className="font-newsreader auth-label auth-stacked-label" style={{ display: "block", fontSize: 18, marginTop: 30, marginBottom: 9 }}>
             Email Address
           </label>
           <input
@@ -97,7 +99,7 @@ export default function RegisterPage() {
             required
           />
 
-          <label className="font-newsreader" style={{ display: "block", fontSize: 18, marginTop: 30, marginBottom: 9 }}>
+          <label className="font-newsreader auth-label auth-stacked-label" style={{ display: "block", fontSize: 18, marginTop: 30, marginBottom: 9 }}>
             Password
           </label>
           <div style={{ position: "relative" }}>
@@ -125,7 +127,7 @@ export default function RegisterPage() {
             </button>
           </div>
 
-          <label className="flex gap-4" style={{ marginTop: 34, color: "#464553", fontSize: 15, lineHeight: "25px" }}>
+          <label className="auth-terms flex gap-4" style={{ marginTop: 34, color: "#464553", fontSize: 15, lineHeight: "25px" }}>
             <input
               type="checkbox"
               checked={acceptedTerms}
@@ -150,6 +152,7 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={submitting}
+            className="auth-submit"
             style={{
               width: "100%",
               height: 56,
@@ -169,8 +172,8 @@ export default function RegisterPage() {
           </button>
         </form>
 
-        <div style={{ height: 1, background: "#c8c4d5", margin: "60px 0 34px" }} />
-        <p className="font-newsreader" style={{ textAlign: "center", color: "#464553", fontSize: 20 }}>
+        <div className="auth-divider" style={{ height: 1, background: "#c8c4d5", margin: "60px 0 34px" }} />
+        <p className="font-newsreader auth-switch" style={{ textAlign: "center", color: "#464553", fontSize: 20 }}>
           Already have an account?{" "}
           <Link href="/login" style={{ color: "#1f108e", fontWeight: 700 }}>
             Sign In

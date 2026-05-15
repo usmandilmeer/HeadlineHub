@@ -95,6 +95,7 @@ export default function Home() {
   const [query, setQuery] = useState("");
   const debouncedQuery = useDebounce(query, 1000);
   const [articles, setArticles] = useState<Article[]>(SAMPLE_ARTICLES);
+  const [displayedCount, setDisplayedCount] = useState(6);
   const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -105,14 +106,16 @@ export default function Home() {
       setLoading(true);
       setError("");
       try {
-        const endpoint = query.trim()
+        const endpoint = debouncedQuery.trim()
           ? `/news/search?q=${encodeURIComponent(debouncedQuery.trim())}`
           : `/news?category=${encodeURIComponent(category)}`;
         const response = await api.get<{ articles: Article[] }>(endpoint, { signal: controller.signal });
         setArticles(response.data.articles?.length ? response.data.articles : SAMPLE_ARTICLES);
+        setDisplayedCount(6);
       } catch (err) {
         if (axios.isCancel(err)) return;
         setArticles(SAMPLE_ARTICLES);
+        setDisplayedCount(6);
         setError("Showing curated sample stories until the news feed responds.");
       } finally {
         setLoading(false);
@@ -135,9 +138,12 @@ export default function Home() {
       .catch(() => setSavedIds(new Set()));
   }, [user]);
 
-  const visibleArticles = useMemo(() => {
-    return articles.length >= 6 ? articles.slice(0, 6) : [...articles, ...SAMPLE_ARTICLES].slice(0, 6);
+  const allArticles = useMemo(() => {
+    return articles.length >= 6 ? articles : [...articles, ...SAMPLE_ARTICLES].slice(0, 6);
   }, [articles]);
+
+  const visibleArticles = useMemo(() => allArticles.slice(0, displayedCount), [allArticles, displayedCount]);
+  const canLoadMore = displayedCount < allArticles.length;
 
   const saveArticle = async (article: Article) => {
     if (!user) {
@@ -217,7 +223,7 @@ export default function Home() {
           </div>
 
           <div className="grid gap-6 md:grid-cols-3" style={{ marginTop: 28 }}>
-            {moreArticles.slice(0, 3).map((article, index) => (
+            {moreArticles.map((article, index) => (
               <ArticleCard
                 key={getArticleKey(article)}
                 article={article}
@@ -229,9 +235,11 @@ export default function Home() {
             ))}
           </div>
 
+          {canLoadMore && (
           <div className="flex justify-center" style={{ marginTop: 80 }}>
             <button
               type="button"
+              onClick={() => setDisplayedCount((count) => Math.min(count + 6, allArticles.length))}
               style={{
                 width: 330,
                 height: 72,
@@ -241,14 +249,19 @@ export default function Home() {
                 color: "#ffffff",
                 fontWeight: 700,
                 cursor: "pointer",
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 14,
               }}
             >
               View Older Articles
-              <span className="material-symbols-outlined" style={{ marginLeft: 12, fontSize: 20, verticalAlign: "middle" }}>
-                expand_more
-              </span>
+              <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none">
+                <path d="m6 9 6 6 6-6" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
             </button>
           </div>
+          )}
 
           {loading && (
             <div aria-hidden="true" style={{ marginTop: 20, textAlign: "center", color: "#464553", fontSize: 13 }}>
@@ -274,7 +287,7 @@ export default function Home() {
 
   @media (max-width: 640px) {
     main {
-      padding-top: 40px !important;
+      padding-top: 88px !important;
       padding-bottom: 40px !important;
     }
 
