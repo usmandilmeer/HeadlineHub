@@ -11,6 +11,7 @@ import api from "@/lib/api";
 import { getArticleKey } from "@/lib/articles";
 import { useAuth } from "@/context/AuthContext";
 import useDebounce from "@/hooks/useDebounce";
+import useSocket from "@/hooks/useSocket";
 import { Article } from "@/types";
 
 const SAMPLE_ARTICLES: Article[] = [
@@ -91,6 +92,7 @@ const SAMPLE_ARTICLES: Article[] = [
 
 export default function Home() {
   const { user } = useAuth();
+  const { newArticlesNotice, clearNewArticlesNotice } = useSocket();
   const [category, setCategory] = useState("technology");
   const [query, setQuery] = useState("");
   const debouncedQuery = useDebounce(query, 1000);
@@ -99,6 +101,7 @@ export default function Home() {
   const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [refreshNonce, setRefreshNonce] = useState(0);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -127,7 +130,7 @@ export default function Home() {
     return () => {
       controller.abort();
     };
-  }, [category, debouncedQuery]);
+  }, [category, debouncedQuery, refreshNonce]);
 
   useEffect(() => {
     if (!user) return;
@@ -173,6 +176,34 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar activeCategory={category} onCategoryChange={setCategory} onSearch={setQuery} />
+      {newArticlesNotice && (
+        <div className="new-articles-banner" role="status" aria-live="polite">
+          <div className="new-articles-banner__row">
+            <span className="new-articles-banner__dot" aria-hidden="true" />
+            <span>{newArticlesNotice.count} new articles available</span>
+            <button
+              type="button"
+              className="new-articles-banner__close"
+              onClick={clearNewArticlesNotice}
+              aria-label="Dismiss new articles notification"
+            >
+              <svg aria-hidden="true" width="21" height="21" viewBox="0 0 24 24" fill="none">
+                <path d="M6 6l12 12M18 6 6 18" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
+              </svg>
+            </button>
+          </div>
+          <button
+            type="button"
+            className="new-articles-banner__refresh"
+            onClick={() => {
+              clearNewArticlesNotice();
+              setRefreshNonce((current) => current + 1);
+            }}
+          >
+            Refresh
+          </button>
+        </div>
+      )}
       <main className="flex-1" style={{ paddingTop: 118, paddingBottom: 82 }}>
         <section className="page-shell" style={{ maxWidth: 1540 }}>
           <p
@@ -272,6 +303,65 @@ export default function Home() {
       </main>
       <Footer />
       <style jsx>{`
+        .new-articles-banner {
+          position: fixed;
+          top: 112px;
+          right: max(40px, calc((100vw - 1540px) / 2 + 40px));
+          z-index: 80;
+          width: min(360px, calc(100vw - 32px));
+          border-radius: 14px;
+          background: #3730a3;
+          color: #ffffff;
+          padding: 16px;
+          box-shadow: 0 18px 42px rgba(31, 16, 142, 0.18);
+        }
+
+        .new-articles-banner__row {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          font-size: 18px;
+          font-weight: 700;
+          line-height: 1.25;
+        }
+
+        .new-articles-banner__dot {
+          width: 11px;
+          height: 11px;
+          border-radius: 999px;
+          background: #eef0ff;
+          flex: 0 0 auto;
+        }
+
+        .new-articles-banner__close {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 30px;
+          height: 30px;
+          margin-left: auto;
+          border: 0;
+          border-radius: 999px;
+          background: transparent;
+          color: #ffffff;
+          cursor: pointer;
+        }
+
+        .new-articles-banner__refresh {
+          width: 100%;
+          height: 38px;
+          margin-top: 22px;
+          border: 0;
+          border-radius: 10px;
+          background: rgba(255, 255, 255, 0.14);
+          color: #ffffff;
+          font-size: 16px;
+          font-weight: 800;
+          letter-spacing: 0.04em;
+          text-transform: uppercase;
+          cursor: pointer;
+        }
+
         @media (max-width: 900px) {
     .saved-layout {
       grid-template-columns: 1fr !important;
@@ -286,6 +376,17 @@ export default function Home() {
   }
 
   @media (max-width: 640px) {
+    .new-articles-banner {
+      top: 72px;
+      right: 16px;
+      left: 16px;
+      width: auto;
+    }
+
+    .new-articles-banner__row {
+      font-size: 16px;
+    }
+
     main {
       padding-top: 88px !important;
       padding-bottom: 40px !important;

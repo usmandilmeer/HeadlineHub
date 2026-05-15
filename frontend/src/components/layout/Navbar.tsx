@@ -124,7 +124,7 @@ export default function Navbar({
                     background: "#f7f6ff",
                     border: "1px solid #bfc0d1",
                     borderRadius: 9999,
-                    padding: "0 18px 0 54px",
+                    padding: "0 18px 0 50px",
                     fontSize: 15,
                     color: "#131b2e",
                     outline: "none",

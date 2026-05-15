@@ -132,7 +132,7 @@ export default function RegisterPage() {
               type="checkbox"
               checked={acceptedTerms}
               onChange={(event) => setAcceptedTerms(event.target.checked)}
-              style={{ width: 20, height: 20, marginTop: 2, accentColor: "#1f108e" }}
+              style={{ width: 20, height: 20, marginTop: 0, flex: "0 0 auto", accentColor: "#1f108e" }}
             />
             <span>
               By creating an account, I agree to the{" "}
