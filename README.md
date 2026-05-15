@@ -77,23 +77,6 @@ docker-compose up --build
 | Backend API | http://localhost:5001 |
 | PostgreSQL | localhost:5434 |
 
-### 4. Run locally (without Docker)
-
-**Backend:**
-```bash
-cd backend
-cp .env.example .env   # fill in DB_HOST=localhost, DB_PORT=5432
-npm install
-npm run dev
-```
-
-**Frontend:**
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
 ## API Endpoints
 
 | Method | Endpoint | Auth | Description |
