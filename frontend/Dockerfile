@@ -19,7 +19,7 @@ COPY --from=builder /app/next.config.* ./
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next ./.next
 
-RUN npm install --production
+RUN npm install --omit=dev
 
 ENV NODE_ENV=production
 
