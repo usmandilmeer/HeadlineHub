@@ -81,6 +81,7 @@ docker-compose up --build
 
 | Method | Endpoint | Auth | Description |
 |---|---|---|---|
+| GET | `/health` | ❌ | Get Backend Health |
 | POST | `/api/auth/register` | ❌ | Register new user |
 | POST | `/api/auth/login` | ❌ | Login user |
 | POST | `/api/auth/logout` | ❌ | Logout user |
