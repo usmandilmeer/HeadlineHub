@@ -15,7 +15,7 @@ import {
 import { useAuth } from "@/context/AuthContext";
 import { Article } from "@/types";
 
-function TrashIcon({ size = 20 }: { size?: number }) {
+function TrashIcon({ size = 25 }: { size?: number }) {
   return (
     <svg aria-hidden="true" width={size} height={size} viewBox="0 0 24 24" fill="none">
       <path
@@ -179,7 +179,7 @@ export default function FavouritesPage() {
   const featured = articles[0];
   const rest = articles.slice(1);
   const sideArticles = rest.slice(0, 2);
-  const gridArticles = rest.slice(2, 5);
+  const gridArticles = rest.slice(2, articles.length);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -259,7 +259,7 @@ export default function FavouritesPage() {
                         border: "1px solid rgba(31,16,142,0.15)",
                       }}
                     >
-                      <TrashIcon size={20} />
+                      <TrashIcon size={22} />
                     </button>
                   </div>
 
@@ -315,7 +315,7 @@ export default function FavouritesPage() {
                             color: "#777584",
                           }}
                         >
-                          <TrashIcon size={18} />
+                          <TrashIcon size={20} />
                         </button>
                       </div>
 
