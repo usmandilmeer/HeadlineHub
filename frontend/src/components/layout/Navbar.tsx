@@ -273,7 +273,7 @@ export default function Navbar({
             style={{ background: "#faf8ff" }}
           >
             {/* Mobile Search */}
-            <div className="relative mb-3">
+            <div className="site-navbar-mobile-search relative">
               <span className="search-glyph" style={{ left: 16 }} aria-hidden="true" />
               <input
                 type="text"
@@ -285,14 +285,14 @@ export default function Navbar({
                   background: "#f2f3ff",
                   border: "1px solid #c8c4d5",
                   borderRadius: 9999,
-                  padding: "8px 16px 8px 44px",
+                  padding: "10px 16px 10px 44px",
                   fontSize: 13,
                   outline: "none",
                 }}
               />
             </div>
             {/* Mobile Categories */}
-            <div className="flex flex-wrap gap-2">
+            <div className="site-navbar-mobile-categories">
               {CATEGORIES.map((cat) => (
                 <button
                   key={cat.value}
@@ -303,7 +303,7 @@ export default function Navbar({
                   style={{
                     fontSize: 13,
                     fontWeight: activeCategory === cat.value ? 600 : 500,
-                    padding: "6px 14px",
+                    padding: "8px 14px",
                     borderRadius: 9999,
                     background: activeCategory === cat.value ? "#3730a3" : "#eaedff",
                     color: activeCategory === cat.value ? "#ffffff" : "#464553",

@@ -11,6 +11,9 @@ function getErrorMessage(error: unknown) {
   return "Registration failed";
 }
 
+const GMAIL_PATTERN = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+const MIN_PASSWORD_LENGTH = 8;
+
 export default function RegisterPage() {
   const router = useRouter();
   const { register } = useAuth();
@@ -25,13 +28,25 @@ export default function RegisterPage() {
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError("");
+    const normalizedEmail = email.trim().toLowerCase();
+
+    if (!GMAIL_PATTERN.test(normalizedEmail)) {
+      setError("Please enter a valid Gmail address.");
+      return;
+    }
+
+    if (password.length < MIN_PASSWORD_LENGTH) {
+      setError("Password must be at least 8 characters.");
+      return;
+    }
+
     if (!acceptedTerms) {
       setError("Please accept the Terms of Service and Privacy Policy.");
       return;
     }
     setSubmitting(true);
     try {
-      await register(name, email, password);
+      await register(name.trim(), normalizedEmail, password);
       router.push("/");
     } catch (err) {
       setError(getErrorMessage(err));
@@ -91,11 +106,13 @@ export default function RegisterPage() {
           </label>
           <input
             className="form-input"
-            type="text"
+            type="email"
             inputMode="email"
-            placeholder="name@company.com"
+            placeholder="name@gmail.com"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
+            pattern="^[a-zA-Z0-9._%+-]+@gmail\.com$"
+            title="Use a valid Gmail address, like name@gmail.com"
             required
           />
 
@@ -109,7 +126,7 @@ export default function RegisterPage() {
               placeholder="At least 8 characters"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
-              minLength={6}
+              minLength={MIN_PASSWORD_LENGTH}
               required
             />
             <button
@@ -117,7 +134,7 @@ export default function RegisterPage() {
               type="button"
               aria-label={showPassword ? "Hide password" : "Show password"}
               onClick={() => setShowPassword((value) => !value)}
-              style={{ position: "absolute", right: 12, top: 13, width: 36, height: 36, color: "#464553" }}
+              style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", width: 36, height: 36, color: "#464553" }}
             >
               <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none">
                 <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" stroke="currentColor" strokeWidth="2" />

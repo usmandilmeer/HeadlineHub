@@ -19,7 +19,7 @@ app.use(helmet());
 app.use(cors({
   origin: (origin, callback) => {
     const allowedOrigins = [
-      process.env.CLIENT_URL || "http://localhost:3000",
+      process.env.CLIENT_URL || "http://localhost:3008",
       "http://localhost:3001",
       "http://127.0.0.1:5500", // 👈 VS Code Live Server
     ];

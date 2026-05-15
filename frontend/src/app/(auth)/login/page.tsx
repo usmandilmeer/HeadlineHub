@@ -11,6 +11,9 @@ function getErrorMessage(error: unknown) {
   return "Sign in failed";
 }
 
+const GMAIL_PATTERN = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+const MIN_PASSWORD_LENGTH = 8;
+
 export default function LoginPage() {
   const router = useRouter();
   const { login } = useAuth();
@@ -23,9 +26,21 @@ export default function LoginPage() {
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError("");
+    const normalizedEmail = email.trim().toLowerCase();
+
+    if (!GMAIL_PATTERN.test(normalizedEmail)) {
+      setError("Please enter a valid Gmail address.");
+      return;
+    }
+
+    if (password.length < MIN_PASSWORD_LENGTH) {
+      setError("Password must be at least 8 characters.");
+      return;
+    }
+
     setSubmitting(true);
     try {
-      await login(email, password);
+      await login(normalizedEmail, password);
       router.push("/");
     } catch (err) {
       setError(getErrorMessage(err));
@@ -73,11 +88,13 @@ export default function LoginPage() {
           </label>
           <input
             className="form-input"
-            type="text"
+            type="email"
             inputMode="email"
-            placeholder="name@example.com"
+            placeholder="name@gmail.com"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
+            pattern="^[a-zA-Z0-9._%+-]+@gmail\.com$"
+            title="Use a valid Gmail address, like name@gmail.com"
             required
           />
 
@@ -96,6 +113,7 @@ export default function LoginPage() {
               placeholder="••••••••"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
+              minLength={MIN_PASSWORD_LENGTH}
               required
             />
             <button
