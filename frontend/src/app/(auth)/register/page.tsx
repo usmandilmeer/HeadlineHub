@@ -111,7 +111,7 @@ export default function RegisterPage() {
             placeholder="name@gmail.com"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
-            pattern="^[a-zA-Z0-9._%+-]+@gmail\.com$"
+            pattern="^[a-zA-Z0-9._%+.-]+@gmail\.com$"
             title="Use a valid Gmail address, like name@gmail.com"
             required
           />
